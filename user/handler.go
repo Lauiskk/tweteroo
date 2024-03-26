@@ -1,4 +1,4 @@
-package task
+package user
 
 import (
 	"Tweteroo/model"
@@ -34,9 +34,9 @@ func (h *Handler) GetAllUsers(c *fiber.Ctx) error{
 	return c.JSON(users)
 }
 
-func (h *Handler) CreateUser (c *fiber.Ctx) error{
-	user = new(model.User)
-	if err := c.BodyParser(user); err != nil{
+func (h *Handler) CreateUser(c *fiber.Ctx) error{
+	user := new(model.User)
+	if err := c.BodyParser(&user); err != nil{
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error" : "Dados de usuário invalido",
 		})
@@ -49,9 +49,36 @@ func (h *Handler) CreateUser (c *fiber.Ctx) error{
 	}
 
 	h.DB.Create(&user)
-	return c.Status(fiber.StatusCreated).JSON(user)
+	return c.Status(fiber.StatusCreated).JSON(&user)
 }
 
+func (h *Handler) UpdateUser(c *fiber.Ctx) error{
+	id := c.Params("id")
+	user := new(model.User)
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+	var existingUser model.User
+	result := h.DB.First(&existingUser, id)
+	if result.Error != nil {
+		return c.Status(fiber.StatusNotFound).SendString("Sem users com esse ID" + id)
+	}
+	existingUser.Username = user.Username
+	existingUser.Avatar = user.Avatar
+	h.DB.Save(&existingUser)
+	return c.JSON(&existingUser)
+}
+
+func (h *Handler) DeleteUser(c *fiber.Ctx) error{
+	id := c.Params("id")
+	var user model.User
+	result := h.DB.First(&user, id)
+	if result.Error != nil {
+		return c.Status(fiber.StatusNotFound).SendString("Sem users com esse ID" + id)
+	}
+	h.DB.Delete(&user)
+	return c.SendString("Usuário deletado com sucesso")
+}
 
 
 
