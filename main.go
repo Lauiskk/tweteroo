@@ -15,7 +15,7 @@ func main(){
         panic("failed to connect database")
     }
 
-	db.AutoMigrate(&model.User{}, &model.Tweet{})
+	db.AutoMigrate(&model.User{})
 
 	handler := user.Handler{DB: db}
 

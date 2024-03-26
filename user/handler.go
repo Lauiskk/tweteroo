@@ -36,7 +36,7 @@ func (h *Handler) GetAllUsers(c *fiber.Ctx) error{
 
 func (h *Handler) CreateUser(c *fiber.Ctx) error{
 	user := new(model.User)
-	if err := c.BodyParser(&user); err != nil{
+	if err := c.BodyParser(user); err != nil{
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error" : "Dados de usuário invalido",
 		})
@@ -49,14 +49,14 @@ func (h *Handler) CreateUser(c *fiber.Ctx) error{
 	}
 
 	h.DB.Create(&user)
-	return c.Status(fiber.StatusCreated).JSON(&user)
+	return c.Status(fiber.StatusCreated).JSON(user)
 }
 
 func (h *Handler) UpdateUser(c *fiber.Ctx) error{
-	id := c.Params("id")
-	user := new(model.User)
-	if err := c.BodyParser(&user); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+id := c.Params("id")
+user := new(model.User)
+if err := c.BodyParser(&user); err != nil {
+	return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
 	var existingUser model.User
 	result := h.DB.First(&existingUser, id)
