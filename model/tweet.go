@@ -13,4 +13,3 @@ type Tweet struct{
 	gorm.Model
 	Tweet string `json:"tweet"`
 }
-

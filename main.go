@@ -1,19 +1,20 @@
 package main
 
 import (
+	user "Tweteroo/api"
 	"Tweteroo/model"
-	"Tweteroo/user"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-func main(){
-	db, err := gorm.Open(sqlite.Open("tasks.db"), &gorm.Config{})
+func main() {
+	db, err := gorm.Open(sqlite.Open("users.db"), &gorm.Config{})
 	if err != nil {
-        panic("failed to connect database")
-    }
+		panic("failed to connect database")
+	}
 
 	db.AutoMigrate(&model.User{})
 
@@ -24,7 +25,7 @@ func main(){
 	api := app.Group("/api")
 
 	api.Get("/", handler.GetAllUsers)
-	
+
 	api.Get("/user/:id", handler.GetUserByID)
 
 	api.Post("/user", handler.CreateUser)
@@ -33,10 +34,8 @@ func main(){
 
 	api.Delete("/user/:id", handler.DeleteUser)
 
-	app.Listen(":8080")
-
-	//err = app.Listen(":8080")
-	//if err != nil{
-	//	log.Fatal(err)
-	//}
+	err = app.Listen(":8080")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
