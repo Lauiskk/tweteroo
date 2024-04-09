@@ -2,14 +2,16 @@ package model
 
 import "gorm.io/gorm"
 
-type User struct{
+type User struct {
 	gorm.Model
-	Avatar   string `json:"avatar"`
-	Username string `json:"username"`
-
+	Username string  `json:"username"`
+	Avatar   string  `json:"avatar"`
+	Tweets   []Tweet `gorm:"foreignKey:UserID"`
 }
 
-type Tweet struct{
+type Tweet struct {
 	gorm.Model
-	Tweet string `json:"tweet"`
+	Tweet  string `json:"tweet"`
+	UserID uint   `json:"userId"`
+	User   User   `json:"user"`
 }
